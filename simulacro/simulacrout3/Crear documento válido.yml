@@ -1,0 +1,22 @@
+info:
+  name: Crear documento válido
+  type: http
+  seq: 3
+
+http:
+  method: POST
+  url: "{{baseUrl}}/api/v1/admin/documents"
+  body:
+    type: json
+    data: |-
+      {
+        "title": "Libro1"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false
