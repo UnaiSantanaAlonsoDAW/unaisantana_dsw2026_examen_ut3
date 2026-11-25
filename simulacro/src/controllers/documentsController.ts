@@ -2,7 +2,6 @@ import type { Request, Response, NextFunction } from 'express';
 import * as documentsService from '../services/documentsService.js';
 import { AppError } from '../errors/AppError.js';
 import { ResourceNotFoundError } from '../errors/ResourceNotFoundError.js';
-import { error } from 'console';
 
 export function list(req: Request, res: Response, next: NextFunction): void {
   try {
@@ -23,7 +22,7 @@ export function getById(req: Request, res: Response, next: NextFunction): void {
       throw new ResourceNotFoundError(404, `Document with id '${documentId}' not found`, 'RESOURCE_NOT_FOUND', documentId);
     }
 
-    res.json({ data: document });
+    res.status(200).json({ data: document });
   } catch (err) {
     next(err);
   }

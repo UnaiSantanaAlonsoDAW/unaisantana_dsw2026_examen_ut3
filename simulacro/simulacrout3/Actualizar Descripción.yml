@@ -1,0 +1,22 @@
+info:
+  name: Actualizar Descripción
+  type: http
+  seq: 9
+
+http:
+  method: PATCH
+  url: "{{baseUrl}}/api/v1/admin/documents/44d9eeac-73ad-4623-97c4-5bcc7e795719"
+  body:
+    type: json
+    data: |-
+      {
+        "description": "Esto es una descripción currada"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false
