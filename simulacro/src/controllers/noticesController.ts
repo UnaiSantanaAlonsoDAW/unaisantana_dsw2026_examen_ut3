@@ -6,7 +6,12 @@ import { ResourceNotFoundError } from '../errors/ResourceNotFoundError.js';
 export function list(req: Request, res: Response, next: NextFunction): void {
   try {
     const page = Number(req.query.page ?? 1);
-    const limit = Number(req.query.limit ?? 20);
+    const limit = Number(req.query.limit ?? 2);
+
+    if (!Number.isInteger(page) || page <= 0 || !Number.isInteger(limit) || limit <= 0 ){
+      throw new AppError(400, `Page and limit must be positive and integer`, `INVALID_PAGINATION`)
+    }
+
     const search = req.query.search ? String(req.query.search).trim() : undefined;
 
     res.json(noticesService.list(page, limit, search));
@@ -24,7 +29,7 @@ export function getById(req: Request, res: Response, next: NextFunction): void {
       throw new ResourceNotFoundError(404, `Notice with id '${noticeId}' not found`, 'RESOURCE_NOT_FOUND', noticeId);
     }
 
-    res.json({ data: notice });
+    res.status(200).json({data: notice})
   } catch (err) {
     next(err);
   }
@@ -38,7 +43,11 @@ export function create(req: Request, res: Response, next: NextFunction): void {
       throw new AppError(400, 'Missing or invalid required field: title', 'INVALID_TITLE');
     }
 
-    const cleanDescription = description ? String(description).trim() : undefined;
+    if (description !== undefined && typeof description !== 'string'){
+      throw new AppError(400, 'Invalid field: description must be a string', 'INVALID_DESCRIPTION');
+    }
+
+    const cleanDescription = description !== undefined ? description.trim(): '';
     const newNotice = noticesService.create(title.trim(), cleanDescription);
 
     res.status(201).json({ data: newNotice });
@@ -53,25 +62,23 @@ export function update(req: Request, res: Response, next: NextFunction): void {
     const { title, description } = req.body;
 
     if (title !== undefined && (typeof title !== 'string' || title.trim().length === 0)) {
-      res.status(400).json(
-        {
-          error: 'INVALID_TITLE',
-          message: 'Title must be a non-empty string',
-        }
-      )
-      return;
+      throw new AppError(400,'Title must be a non-empty string', 'INVALID_TITLE')
+    }
+
+    if (description !== undefined && typeof description !== 'string') {
+      throw new AppError(400, 'Description must be a string', 'INVALID_DESCRIPTION');
     }
 
     const notice = noticesService.update(noticeId, {
       title: title !== undefined ? title.trim() : undefined,
-      description: description !== undefined ? String(description).trim() : undefined,
+      description: description !== undefined ? description.trim() : undefined,
     });
 
     if (!notice) {
-      throw new AppError(404, `Notice with id '${noticeId}' not found`, 'NOT_FOUND');
+      throw new ResourceNotFoundError(404, `Notice with id '${noticeId}' not found`, 'RESOURCE_NOT_FOUND', noticeId);
     }
 
-    res.json({ data: notice });
+    res.status(200).json({ data: notice });
   } catch (err) {
     next(err);
   }
