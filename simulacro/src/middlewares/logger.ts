@@ -1,10 +1,14 @@
 
 import type { Request, Response, NextFunction } from 'express';
+import { env } from '../config/env.js';
 
 export function logger(req: Request, res: Response, next: NextFunction): void {
   const start = performance.now(); // Empieza a medir lo que tarda la petición
 
-  res.on('finish', () => {
+  const LogState = env.LOG;
+
+  if (LogState === "ON"){
+    res.on('finish', () => {
     // Se ejecuta cuando la petición ha terminado después de pasar por todos los middlewares y handlers
     const duration = Math.round(performance.now() - start);
     const entry = {
@@ -17,6 +21,8 @@ export function logger(req: Request, res: Response, next: NextFunction): void {
     };
     console.log(JSON.stringify(entry)); // Loguea en pantalla la información de la petición
   });
+  }
+  
 
   next();
 }

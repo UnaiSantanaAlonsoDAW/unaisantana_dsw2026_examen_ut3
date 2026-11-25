@@ -43,3 +43,19 @@ Además en la consola salta el log que he puesto en el errorHandler cuando la in
 ResourceNotFoundError capturado
 {"requestId":"c284cce9-641b-403b-9a8f-1f4c8a168b74","method":"GET","path":"/api/v1/admin/documents/idinexistente","status":404,"durationMs":11,"timestamp":"2026-11-24T19:44:00.328Z"}
 ```
+
+## Diferencia recorrido error centralizado 
+
+La diferencia radica en que el ResourceNotFoundError se encuentra en el controlador y de ahí lanza un error que está en error que hereda de la clase Error para acabar en el ErrorHandler. Mientras que por otro lado el error este actúa en el mismo controlador y lo devuelve directamente.
+
+## Log en on y en off
+
+Si hago una petición al live con el log en on:
+
+```pwsh
+  {"requestId":"2ab452b0-82ea-4a59-9273-666dacbbf961","method":"GET","path":"/live","status":200,"durationMs":8,"timestamp":"2026-11-25T09:57:38.432Z"}
+```
+
+Si lo hago con el log en off no me devuelve nada.
+
+LA diferencia radica en lo que acabo de programar, la sentencia if habilita o deshabilita el logger según lo configurado en el .env

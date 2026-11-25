@@ -4,4 +4,5 @@ export const env = {
   PORT: Number(process.env.PORT ?? 3000),
   NODE_ENV: process.env.NODE_ENV ?? 'development',
   APP_NAME: process.env.APP_NAME,
+  LOG: process.env.LOG ?? 'ON'
 };
